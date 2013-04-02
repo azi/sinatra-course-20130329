@@ -1,4 +1,7 @@
-<table>
+<table border="1">
+  <tr style="text-align:right">
+      <th colspan="5"><a href="/contacts/new">new</a></th>
+  </tr>
   <tr>
     <%@headers[0..3].each do |title| %>
       <th><%=title%></th>
@@ -11,7 +14,9 @@
       <%@headers[1..3].each do |key| %>
         <td><%=contact[key]%></td>
       <%end%>
-      <td><a href="/contacts/<%=contact['id']%>/edit">edit</a></td>
+      <td><a href="/contacts/<%=contact['id']%>/edit" style="margin:3px;">edit</a>
+          |<a href="/contacts/<%=contact['id']%>/delete" style="margin:3px;">delete</a>
+      </td>
     </tr>
   <%end%>
 

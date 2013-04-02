@@ -74,4 +74,10 @@ get '/contacts/:id' do
   erb :show
 end
 
-
+get '/contacts/:id/delete' do
+  @contact = @contacts.select{|contact| contact["id"] == params[:id]}
+  @contacts.delete_if {|item| item["id"]== @contact[0]["id"]}
+  #@contacts.delete_at(params[:id].to_i-1)
+  save_csv(@contacts)
+  redirect '/contacts'
+end
