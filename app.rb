@@ -40,27 +40,50 @@ get '/contacts' do
   if params[:name_like]
     @contacts = @contacts.select{|contact| contact["name"].include?(params[:name_like])  }
   end
+p @contacts
   erb :index
 end
 
-#post '/contacts' do
-#
-#end
-#
-#get '/contacts/new' do
-#  erb :form
-#end
-#
+# 好拼湊的寫法啊。。。Orz..sintra 初體驗Orz...Orz...好糾結 
+# hash要加值時，怎樣可以加在指定的位置，而不是每次都只能加在最後？
+post '/contacts/new' do
+	#_temp = {"id"=>@contacts.last['id'].to_i+1}
+	#_temp.merge!(params[:contact])
+  #@contacts << _temp
+	
+  _temp = {}
+	_temp["id"]=@contacts.last['id'].to_i+1
+	_temp["name"]=params[:contact]["name"]
+	_temp["phone"]=params[:contact]["phone"]
+	_temp["address"]=params[:contact]["address"]
+	_temp["created_on"]=Time.new().strftime("%Y/%m/%d")
+	_temp["note"]=params[:contact]["note"]  	
+
+	@contacts << _temp
+	save_csv(@contacts)
+	redirect '/'
+end
+
+
+get '/contacts/new' do
+	@action = "/contacts/new"
+	@contact ||={}
+	@contacts.first.keys.each {|key| @contact[key]="" }
+	erb :form
+end
+
 
 before %r{\/contacts\/(\d+).*} do
   @contact = @contacts.select{|contact| contact["id"] == params[:captures].first}
-  not_found if @contact.empty?
+	not_found if @contact.empty?
   @contact = @contact.first
 end
 
 put '/contacts/:id' do
-  @contacts[params[:id].to_i - 1].merge! params[:contact]
-  save_csv(@contacts)
+	_temp = @contacts.select{|contact| contact["id"] == params[:id]}
+	#@contacts[params[:id].to_i - 1].merge! params[:contact]
+	_temp[0].merge! params[:contact]
+	save_csv(@contacts)
   redirect '/contacts'
 end
 
